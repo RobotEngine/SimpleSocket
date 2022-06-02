@@ -1,0 +1,18 @@
+{
+  "name": "simple-socket-js",
+  "version": "2.0.4",
+  "description": "Simple Socket makes it easier than ever to publish events live between clients and servers.",
+  "main": "index.js",
+  "repository": "https://github.com/RobotEngine/SimpleSocket",
+  "keywords": [
+    "websocket",
+    "socket",
+    "simplesocket",
+    "exotek"
+  ],
+  "author": "Exotek",
+  "license": "ISC",
+  "dependencies": {
+    "websocket": "^1.0.34"
+  }
+}
