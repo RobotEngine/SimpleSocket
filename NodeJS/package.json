@@ -1,6 +1,6 @@
 {
   "name": "simple-socket-js",
-  "version": "2.0.4",
+  "version": "2.1.1",
   "description": "Simple Socket makes it easier than ever to publish events live between clients and servers.",
   "main": "index.js",
   "repository": "https://github.com/RobotEngine/SimpleSocket",
