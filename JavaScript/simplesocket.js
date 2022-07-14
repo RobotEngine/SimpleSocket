@@ -3,7 +3,7 @@ class SimpleSocket {
     this.id = init.project_id;
     this.token = init.project_token;
 
-    this.socketURL = "wss://simplesocket.net:32560/socket/v2";
+    this.socketURL = "wss://simplesocket.net/socket/v2";
     this.supportsETF = init.useBinary || typeof(TextEncoder) != 'undefined';
     this.operations = {};
     this.totalMessages = 0;
@@ -86,7 +86,7 @@ class SimpleSocket {
           let opKeys = Object.keys(this.operations);
           for (let i = 0; i < opKeys.length; i++) {
             let oper = this.operations[opKeys[i]];
-            if (oper[3] == data[1]) {
+            if (oper != null && oper[3] == data[1]) {
               if (oper[2] != null) {
                 oper[2](data[2], data[3]);
               }
@@ -94,6 +94,12 @@ class SimpleSocket {
           }
         } else if (this.remotes[data[4]] != null) {
           this.remotes[data[4]](data[2], data[3]);
+        }
+        break;
+      case 3:
+        // RESPONSE
+        if (this.operations[data[1]] != null) {
+          this.operations[data[1]][2](data[2]);
         }
         break;
       case 1:
@@ -231,10 +237,13 @@ class SimpleSocket {
       id: subID,
       edit: (newFilter) => {
         if (this.operations[subID] != null) {
-          this.debug("EDITING: Filter: " + JSON.stringify(newFilter));
-          this.operations[subID][1][0] = newFilter;
-          this.send(4, [subID, this.operations[subID][3], newFilter]);
-          this.operations[subID][3] = this.hash(newFilter);
+          let newHash = this.hash(newFilter);
+          if (this.operations[subID][3] != newHash) {
+            this.debug("EDITING: Filter: " + JSON.stringify(newFilter));
+            this.operations[subID][1][0] = newFilter;
+            this.send(4, [subID, this.operations[subID][3], newFilter]);
+            this.operations[subID][3] = newHash;
+          }
         }
       },
       close: () => {
@@ -273,6 +282,14 @@ class SimpleSocket {
       closeSubscribe: (funcName) => {
         this.debug("REMOTLY UNSUBSCRIBING: Name: " + funcName);
         this.send(6, [secureID, 5, funcName]);
+      },
+      valid: () => {
+        this.debug("REMOTLY VALIDATING SecureID: " + secureID);
+        return new Promise((resolve) => {
+          this.send(9, [0, secureID], (response) => {
+            resolve(response);
+          });
+        });
       }
     }
   }
