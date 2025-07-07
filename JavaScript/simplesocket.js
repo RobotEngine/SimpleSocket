@@ -1,6 +1,5 @@
 // SimpleSocket Client V2
 // ©2025 Exotek
-// https://codebeautify.org/minify-js
 
 class SimpleSocket {
   constructor(init) {
